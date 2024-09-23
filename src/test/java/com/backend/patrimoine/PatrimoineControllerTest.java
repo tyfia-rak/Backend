@@ -25,6 +25,9 @@ public class PatrimoineControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
+	@Autowired
+	private ObjectMapper objectMapper; // Injecter l'ObjectMapper configuré
+
 	private static final Path STORAGE_PATH = Paths.get("patrimoines");
 
 	@BeforeEach
@@ -41,24 +44,20 @@ public class PatrimoineControllerTest {
 
 	@Test
 	public void testCreateOrUpdatePatrimoine() throws Exception {
-		Patrimoine patrimoine = new Patrimoine();
-		patrimoine.setPossesseur("John Doe");
+		Patrimoine patrimoine = new Patrimoine("John Doe", LocalDateTime.now());
 
-		ObjectMapper mapper = new ObjectMapper();
 		mockMvc.perform(put("/patrimoines/1")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(mapper.writeValueAsString(patrimoine)))
+						.content(objectMapper.writeValueAsString(patrimoine))) // Utiliser l'ObjectMapper injecté
 				.andExpect(status().isOk());
 	}
 
 	@Test
 	public void testGetPatrimoine() throws Exception {
-		Patrimoine patrimoine = new Patrimoine();
-		patrimoine.setPossesseur("John Doe");
-		patrimoine.setDerniereModification(LocalDateTime.now());
+		Patrimoine patrimoine = new Patrimoine("John Doe", LocalDateTime.now());
 
-		ObjectMapper mapper = new ObjectMapper();
-		Files.write(STORAGE_PATH.resolve("1.json"), mapper.writeValueAsBytes(patrimoine));
+		// Écrire le fichier JSON avec l'ObjectMapper injecté
+		Files.write(STORAGE_PATH.resolve("1.json"), objectMapper.writeValueAsBytes(patrimoine));
 
 		mockMvc.perform(get("/patrimoines/1"))
 				.andExpect(status().isOk());

@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Patrimoine {
     private String possesseur;
     private LocalDateTime derniereModification;
